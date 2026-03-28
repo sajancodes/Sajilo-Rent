@@ -90,4 +90,4 @@ const ADMIN_UID = 'UrH1D9UX7YSjt9KyOc7fXDwA8jl1';
 
 ## 📄 License
 
-&copy; 2026 Sajilo Rent. All rights reserved. Made with ❤️ by Vishal.
+&copy; 2026 Sajilo Rent. All rights reserved. Made with ❤️ by Sajan
