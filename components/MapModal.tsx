@@ -4,6 +4,16 @@ import { XIcon, FullScreenIcon, ExitFullScreenIcon } from './icons/Icons';
 // This tells TypeScript that we expect 'L' to be a global variable (from the Leaflet CDN script)
 declare var L: any;
 
+// Fix Leaflet default icon path issues
+if (typeof L !== 'undefined' && L.Icon && L.Icon.Default) {
+  delete (L.Icon.Default.prototype as any)._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  });
+}
+
 interface MapModalProps {
   location: { lat: number; lng: number };
   onClose: () => void;
@@ -19,8 +29,17 @@ const MapModal: React.FC<MapModalProps> = ({ location, onClose, title }) => {
     if (mapContainerRef.current && !mapRef.current && location) {
       mapRef.current = L.map(mapContainerRef.current).setView([location.lat, location.lng], 16);
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+      }).addTo(mapRef.current);
+
+      // Add roads and labels on top of imagery
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Labels &copy; Esri',
+      }).addTo(mapRef.current);
+
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Transportation &copy; Esri',
       }).addTo(mapRef.current);
 
       L.marker([location.lat, location.lng]).addTo(mapRef.current)
