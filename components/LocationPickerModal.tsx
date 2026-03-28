@@ -3,6 +3,16 @@ import { XIcon } from './icons/Icons';
 
 declare var L: any; // Leaflet global, now also for esri-leaflet
 
+// Fix Leaflet default icon path issues
+if (typeof L !== 'undefined' && L.Icon && L.Icon.Default) {
+  delete (L.Icon.Default.prototype as any)._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  });
+}
+
 interface LocationPickerModalProps {
   onClose: () => void;
   onLocationSelect: (coords: { lat: number; lng: number }) => void;
@@ -21,8 +31,17 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({ onClose, onLo
     if (mapContainerRef.current && !mapRef.current) {
       mapRef.current = L.map(mapContainerRef.current).setView([defaultCenter.lat, defaultCenter.lng], 13);
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+      }).addTo(mapRef.current);
+
+      // Add roads and labels on top of imagery
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Labels &copy; Esri',
+      }).addTo(mapRef.current);
+
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Transportation &copy; Esri',
       }).addTo(mapRef.current);
 
       // Add draggable marker
@@ -34,28 +53,48 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({ onClose, onLo
         setSelectedCoords(defaultCenter);
       }
 
-      // Add search control
-      const searchControl = L.esri.Geocoding.geosearch({
-        position: 'topright',
-        placeholder: 'Search for an address or place',
-        useMapBounds: false, // Search globally
-        providers: [
-            L.esri.Geocoding.arcgisOnlineProvider({
-                // You can add an API key here if you have one for higher usage limits
-            })
-        ]
-      }).addTo(mapRef.current);
+      // Add search control with retry logic to handle race conditions during script loading
+      let searchRetryCount = 0;
+      const maxRetries = 10;
 
-      // Listen for search results
-      searchControl.on('results', (data: any) => {
-        if (data.results && data.results.length > 0) {
-            const { lat, lng } = data.results[0].latlng;
-            markerRef.current.setLatLng([lat, lng]);
-            mapRef.current.setView([lat, lng], 16); // Zoom in closer on search result
-            setSelectedCoords({ lat, lng });
+      const initSearchControl = () => {
+        if (!mapRef.current) return;
+
+        const esri = (L as any).esri;
+        if (esri && esri.Geocoding && esri.Geocoding.geosearch) {
+          try {
+            const searchControl = esri.Geocoding.geosearch({
+              position: 'topright',
+              placeholder: 'Search for an address or place',
+              useMapBounds: false, // Search globally
+              providers: [
+                  esri.Geocoding.arcgisOnlineProvider({
+                      // You can add an API key here if you have one for higher usage limits
+                  })
+              ]
+            }).addTo(mapRef.current);
+
+            // Listen for search results
+            searchControl.on('results', (data: any) => {
+              if (data.results && data.results.length > 0) {
+                  const { lat, lng } = data.results[0].latlng;
+                  markerRef.current.setLatLng([lat, lng]);
+                  mapRef.current.setView([lat, lng], 16); // Zoom in closer on search result
+                  setSelectedCoords({ lat, lng });
+              }
+            });
+          } catch (e) {
+            console.error("Geocoding failed to initialize", e);
+          }
+        } else if (searchRetryCount < maxRetries) {
+          searchRetryCount++;
+          setTimeout(initSearchControl, 500);
+        } else {
+          console.error("Geocoding failed to initialize after retries. L.esri is undefined or missing Geocoding.");
         }
-      });
+      };
 
+      initSearchControl();
 
       // Update marker and state on drag
       markerRef.current.on('dragend', (event: any) => {
@@ -73,11 +112,14 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({ onClose, onLo
     }
 
     // Invalidate map size to ensure it renders correctly after modal animation
-    setTimeout(() => {
-        mapRef.current?.invalidateSize();
-    }, 100);
+    const timeoutIds = [100, 300, 500].map(ms => 
+        setTimeout(() => {
+            mapRef.current?.invalidateSize();
+        }, ms)
+    );
 
     return () => {
+      timeoutIds.forEach(clearTimeout);
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
@@ -101,8 +143,8 @@ const LocationPickerModal: React.FC<LocationPickerModalProps> = ({ onClose, onLo
           </button>
         </div>
         <div className="relative flex-grow">
-          <div ref={mapContainerRef} className="w-full h-full" id="location-picker-map"></div>
-          <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-white/80 dark:bg-black/80 p-2 rounded-md shadow-lg text-xs text-gray-700 dark:text-gray-200 pointer-events-none">
+          <div ref={mapContainerRef} className="absolute inset-0" id="location-picker-map"></div>
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-white/80 dark:bg-black/80 p-2 rounded-md shadow-lg text-xs text-gray-700 dark:text-gray-200 pointer-events-none z-[1000]">
             Drag the marker or click on the map to set the location.
           </div>
         </div>
