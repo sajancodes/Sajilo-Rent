@@ -1,0 +1,7 @@
+{
+  "name": "Sajilo Rent",
+  "description": "A Nepal-focused room rental application to find and list rooms, flats, and apartments across Nepal. Find your perfect space with Sajilo Rent.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

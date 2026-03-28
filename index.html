@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="https://iili.io/qNyNLKJ.md.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- SEO Meta Tags -->
+    <title>Sajilo Rent | Find Rooms, Flats, and Apartments for Rent</title>
+    <meta name="description" content="A Nepal-focused room rental application to find and list rooms, flats, and apartments across Nepal and India. Find your perfect space with Sajilo Rent." />
+    <meta name="keywords" content="room rent nepal, flat rent kathmandu, apartment pokhara, room rent india, find rooms, rent flat, Sajilo Rent" />
+    <meta name="author" content="Sajilo Rent" />
+    <link rel="canonical" href="https://troom.zone/" /> <!-- Replace with your actual domain -->
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://troom.zone/" /> <!-- Replace with your actual domain -->
+    <meta property="og:title" content="Sajilo Rent | Find Rooms, Flats, and Apartments for Rent" />
+    <meta property="og:description" content="Find and list rooms, flats, and apartments across Nepal and India. Your perfect space is just a click away." />
+    <meta property="og:image" content="https://iili.io/qNyNLKJ.md.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://troom.zone/" /> <!-- Replace with your actual domain -->
+    <meta property="twitter:title" content="Sajilo Rent | Find Rooms, Flats, and Apartments for Rent" />
+    <meta property="twitter:description" content="Find and list rooms, flats, and apartments across Nepal and India. Your perfect space is just a click away." />
+    <meta property="twitter:image" content="https://iili.io/qNyNLKJ.md.png" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <!-- Esri Leaflet and Geocoder for Map Search -->
+    <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@3.1.4/dist/esri-leaflet-geocoder.css" integrity="sha512-IM3Hs+feyi40yZhDH6AFkxCVju2ACL4CgGcnbQK33dbholJsvEFF3gBEHdrAogLQHGSAAUsc+W9Zw/6qk5U6g==" crossorigin="" />
+    <script src="https://unpkg.com/esri-leaflet@3.0.10/dist/esri-leaflet.js" integrity="sha512-GGGPLv5Lsoh3v9zgY35Ld5iFwjHj4RITEV630XEpl8sIeLz2fQ4OAg6qu7cdjUa8l5L3j15i/s5r9g1Qnw6xcA==" crossorigin=""></script>
+    <script src="https://unpkg.com/esri-leaflet-geocoder@3.1.4/dist/esri-leaflet-geocoder.js" integrity="sha512-I5eBOLo2lnEppNBfU01dSTcrbUR5Lbqdwvg3F3Ld6s341LpW0Q8bFgmP9GkFfUssxb2s2tA0yGZfBv2u+8iVwA==" crossorigin=""></script>
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://troom.zone/",
+      "name": "Sajilo Rent",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://troom.zone/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Sajilo Rent",
+      "url": "https://troom.zone/",
+      "logo": "https://iili.io/qNyNLKJ.md.png"
+    }
+    </script>
+
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+      }
+      /* Smooth theme transitions */
+      body, .bg-white, .bg-gray-50, .bg-gray-200 {
+        transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+      }
+      /* Style Esri Geocoder to match theme */
+      .leaflet-control-geosearch form, .leaflet-control-geosearch .results {
+        border-color: #D1D5DB; /* gray-300 */
+        background-color: white;
+        color: #1F2937; /* gray-800 */
+      }
+      .dark .leaflet-control-geosearch form, .dark .leaflet-control-geosearch .results {
+        border-color: #4B5563; /* gray-600 */
+        background-color: #374151; /* gray-700 */
+        color: #F3F4F6; /* gray-100 */
+      }
+      .leaflet-control-geosearch .results > * {
+         border-bottom-color: #e5e7eb; /* gray-200 */
+      }
+       .dark .leaflet-control-geosearch .results > * {
+         border-bottom-color: #4B5563; /* gray-600 */
+      }
+      .leaflet-control-geosearch a.leaflet-bar-part-top, .leaflet-control-geosearch a.leaflet-bar-part-bottom {
+        background-color: #F9FAFB; /* gray-50 */
+        color: #374151; /* gray-700 */
+      }
+      .dark .leaflet-control-geosearch a.leaflet-bar-part-top, .dark .leaflet-control-geosearch a.leaflet-bar-part-bottom {
+        background-color: #1F2937; /* gray-800 */
+        color: #D1D5DB; /* gray-300 */
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js",
+    "firebase/storage": "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.5.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.29.0"
+  }
+}
+</script>
+<script>
+  // Apply theme from localStorage on initial load to prevent flashing
+  if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-gray-50 dark:bg-gray-900">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

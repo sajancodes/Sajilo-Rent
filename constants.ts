@@ -1,0 +1,86 @@
+import { Country } from './types';
+
+export const COUNTRIES: { id: Country; name: string }[] = [
+  { id: 'NEPAL', name: 'Nepal' },
+  { id: 'INDIA', name: 'India' },
+];
+
+export const NEPALI_CITIES: string[] = [
+  'Banepa',
+  'Besishahar',
+  'Bhadrapur',
+  'Bhaktapur',
+  'Bharatpur',
+  'Bhimdatta',
+  'Bidur',
+  'Biratnagar',
+  'Birendranagar',
+  'Birgunj',
+  'Birtamod',
+  'Butwal',
+  'Chandrapur',
+  'Damak',
+  'Dhangadhi',
+  'Dharan',
+  'Dhulikhel',
+  'Gaur',
+  'Ghorahi',
+  'Gulariya',
+  'Hetauda',
+  'Ilam',
+  'Inaruwa',
+  'Itahari',
+  'Jaleshwar',
+  'Janakpur',
+  'Kalaiya',
+  'Kathmandu',
+  'Lahan',
+  'Lalitpur',
+  'Malangwa',
+  'Mechinagar',
+  'Nepalgunj',
+  'Panauti',
+  'Pokhara',
+  'Rajbiraj',
+  'Siddharthanagar',
+  'Siraha',
+  'Tansen',
+  'Triyuga',
+  'Tulsipur',
+  'Urlabari',
+  'Waling',
+];
+
+export const INDIAN_CITIES: string[] = [
+  'Mumbai',
+  'Delhi',
+  'Bangalore',
+  'Hyderabad',
+  'Ahmedabad',
+  'Chennai',
+  'Kolkata',
+  'Surat',
+  'Pune',
+  'Jaipur',
+  'Lucknow',
+  'Kanpur',
+  'Nagpur',
+  'Indore',
+  'Thane',
+  'Bhopal',
+  'Visakhapatnam',
+  'Patna',
+  'Vadodara',
+  'Ghaziabad',
+  'Ludhiana',
+  'Agra',
+  'Nashik',
+];
+
+export const CITIES_BY_COUNTRY: Record<Country, string[]> = {
+  NEPAL: NEPALI_CITIES,
+  INDIA: INDIAN_CITIES,
+};
+
+// MOCK_ROOM_LISTINGS have been removed as per the requirement to integrate Firebase.
+// The app will now fetch live data from the Firestore database.
